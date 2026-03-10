@@ -1,0 +1,63 @@
+services:
+  kafka:
+    image: apache/kafka:latest
+    container_name: atlas-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      CLUSTER_ID: "stream-api-cluster"
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,INTERNAL://0.0.0.0:9094,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,INTERNAL://kafka:9094
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: /tmp/kraft-kafka-logs
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: atlas-kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: atlas-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9094
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  stream-api:
+    image: atlasplatformdocker/streaming-proto-server-host:latest
+    container_name: atlas-stream-api
+    ports:
+      - "13579:13579"
+      - "10010:10010"
+    environment:
+      CONFIG_PATH: /app/Configs/AppConfig.json
+      AUTO_START: "true"
+      LOG_LEVEL: Information
+      METRICS_PORT: "10010"
+    volumes:
+      - ./configs:/app/Configs
+      - ./logs:/app/logs
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  key-generator:
+    image: atlasplatformdocker/keygenerator-proto-server:latest
+    container_name: atlas-key-generator
+    ports:
+      - "15379:15379"
+    depends_on:
+      kafka:
+        condition: service_healthy
+
