@@ -1,18 +1,15 @@
 {
   "StreamApiConfig": {
-    "streamCreationStrategy": "TopicBased",
-    "brokerUrl": "kafka:9094",
+    "streamCreationStrategy": 2,
+    "brokerUrl": "kafka:9092",
     "streamApiPort": 13579,
     "integrateSessionManagement": true,
     "integrateDataFormatManagement": true,
     "batchingResponses": true,
     "initialisationTimeoutSeconds": 30,
     "terminationTimeoutSeconds": 1,
-    "partitionMappings": {
-      "0": {
-        "streamName": "default",
-        "partitionNumber": 0
-      }
-    }
+    "PartitionMappings": [
+      {}
+    ]
   }
 }
