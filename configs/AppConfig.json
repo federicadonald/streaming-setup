@@ -1,7 +1,7 @@
 {
   "StreamApiConfig": {
     "streamCreationStrategy": 2,
-    "brokerUrl": "kafka:9092",
+    "brokerUrl": "kafka:9094",
     "streamApiPort": 13579,
     "integrateSessionManagement": true,
     "integrateDataFormatManagement": true,
