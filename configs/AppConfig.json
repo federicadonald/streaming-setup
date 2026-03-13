@@ -1,15 +1,52 @@
 {
   "StreamApiConfig": {
-    "streamCreationStrategy": 2,
-    "brokerUrl": "kafka:9094",
-    "streamApiPort": 13579,
-    "integrateSessionManagement": true,
-    "integrateDataFormatManagement": true,
-    "batchingResponses": true,
-    "initialisationTimeoutSeconds": 30,
-    "terminationTimeoutSeconds": 1,
+    "StreamCreationStrategy": "TopicBased",
+    "BrokerUrl": "kafka:9094",
     "PartitionMappings": [
-      {}
-    ]
+      {
+        "Stream": "Stream1",
+        "Partition": 1
+      },
+      {
+        "Stream": "Stream2",
+        "Partition": 2
+      }
+    ],
+    "IntegrateSessionManagement": true,
+    "IntegrateDataFormatManagement": true,
+    "Domain": "POC",
+    "UseRemoteKeyGenerator": false,
+    "RemoteKeyGeneratorServiceAddress": "",
+    "BatchingResponses": false,
+    "StreamApiPort": 13579,
+    "InitialisationTimeoutSeconds": 5,
+    "TerminationTimeoutSeconds": 5,
+    "EnableGrpcReflection": false
+  },
+  "GrpcConfig": {
+    "MaxReceiveMessageSize": 4194304,
+    "MaxSendMessageSize": 4194304
+  },
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.AspNetCore": "Warning",
+        "System": "Warning",
+        "MA.Streaming": "Information",
+        "MA.DataPlatforms": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}"
+        }
+      }
+    ],
+    "Enrich": [ "FromLogContext", "WithThreadId" ]
   }
 }
