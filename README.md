@@ -15,16 +15,14 @@ A minimal Kafka-powered streaming playground that pairs the Atlas Streaming API 
 - `atlas_kafka_streaming.ipynb` is an exploratory notebook that connects to the stack once it is running.
 
 ## Getting started
-1. Install Docker Desktop (Docker Engine 20+). Ensure `docker compose` is available.
-2. (Optional) Customize `configs/AppConfig.json` before launching to adjust partitions, logging, or gRPC limits.
-3. Start the stack:
-   ```sh
-   docker compose pull   # refresh images
-   docker compose up -d  # start Kafka, Kafka UI, stream API, and key generator
-   ```
-4. Confirm Kafka is healthy via `docker compose ps` and Kafka UI on port 8080.
-5. Use any gRPC client against localhost:13579 to interact with the Stream API; the key generator runs on localhost:15379.
-6. Tail the Stream API logs from the host by monitoring `logs/` or attaching to the container with `docker compose logs stream-api`.
+1. Install Docker Desktop (Docker Engine 20+). 
+2. Clone this repository 
+3. Install the Jupyter Notebooks VSCode extension to run the notebook [here](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter).
+4. (Optional) Customize `configs/AppConfig.json` before launching to adjust partitions, logging, or gRPC limits.
+5. Start the stack by interacting with `atlas_kafka_streaming.ipynb`. 
+6. Confirm Kafka is healthy via `docker compose ps` and Kafka UI on port 8080.
+7. Use any gRPC client against localhost:13579 to interact with the Stream API; the key generator runs on localhost:15379.
+8. Tail the Stream API logs from the host by monitoring `logs/` or attaching to the container with `docker compose logs stream-api`.
 
 ## Configuration highlights
 - `StreamApiConfig` (inside `configs/AppConfig.json`) defines the stream creation strategy, broker URL, partition mappings, session/data-format integrations, and timeouts.
@@ -36,5 +34,8 @@ A minimal Kafka-powered streaming playground that pairs the Atlas Streaming API 
 - The full proto definitions for the Stream API, key generator, and open data service live under `MA.DataPlatforms.Protocol/proto/ma/streaming`.
 - Follow the guidance in [MA.DataPlatforms.Protocol/README.md](MA.DataPlatforms.Protocol/README.md) to install Buf, run `buf lint`, or `buf generate` if you regenerate bindings.
 
-## Notebook playground
-Open `atlas_kafka_streaming.ipynb` in VS Code or Jupyter once the Docker stack is running to experiment with producing/consuming data, inspecting stream metadata, and walking through samples without wiring up CLI tooling every time.
+## Working with the notebook
+- Use the built-in notebook experience in VS Code to open `atlas_kafka_streaming.ipynb`. Cells are grouped into markdown (explanatory text) and code; run them sequentially to replay the examples or rerun only the sections you want to inspect.
+- Keep an eye on the Python kernel chooser in the top-right of the notebook—switch to the workspace interpreter before executing code so it sees the same project dependencies.
+- Restarting or resetting the kernel can be helpful if you change project files; rerun the relevant cells afterward to reinitialize connections to the Docker stack.
+- The notebook already references the running Docker services (`docker compose ps` can confirm they are up). Cells that call the gRPC services expect the containers to be reachable on the ports described earlier (13579 for the Stream API, 15379 for the key generator).
